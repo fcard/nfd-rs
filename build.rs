@@ -19,8 +19,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+#![feature(static_nobundle)]
 
-extern crate gcc;
 use std::env;
 use std::process::Command;
 
@@ -31,7 +31,7 @@ macro_rules! nfd {
 }
 
 fn main() {
-    let mut cfg = gcc::Config::new();
+    let mut cfg = cc::Build::new();
     let env = env::var("TARGET").unwrap();
 
     cfg.include(nfd!("include"));
@@ -45,10 +45,11 @@ fn main() {
         cfg.cpp(true);
         cfg.file(nfd!("nfd_win.cpp"));
         cfg.compile("libnfd.a");
-        println!("cargo:rustc-link-lib=ole32");
-        println!("cargo:rustc-link-lib=shell32");
-        // MinGW doesn't link it by default
-        println!("cargo:rustc-link-lib=uuid");
+        println!("cargo:rustc-link-lib=static-nobundle=ole32");
+        println!("cargo:rustc-link-lib=static-nobundle=shell32");
+        println!("cargo:rustc-link-lib=static-nobundle=uuid");
+        println!("cargo:rustc-link-lib=static-nobundle=stdc++");
+        println!("cargo:rustc-link-lib=static-nobundle=gcc");
     } else {
         let pkg_output = Command::new("pkg-config")
             .arg("--cflags")
