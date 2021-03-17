@@ -44,6 +44,7 @@ fn main() {
     } else if env.contains("windows") {
         cfg.cpp(true);
         cfg.file(nfd!("nfd_win.cpp"));
+        cfg.define("FTG_IGNORE_UNICODE", "");
         cfg.compile("libnfd.a");
         println!("cargo:rustc-link-lib=static-nobundle=ole32");
         println!("cargo:rustc-link-lib=static-nobundle=shell32");
